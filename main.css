@@ -1,0 +1,38 @@
+.grid{
+    display: grid;
+    grid-template-columns: repeat(6, 110px);
+    grid-template-rows: repeat(4, 110px);
+    width: 660px;
+    height: 440px;
+    margin: 0 auto;
+    justify-content: center;
+    background-color: black;
+    margin-top: 100px;
+}
+
+.cell{
+    border:2px solid rgb(36, 35, 35);
+    background-color: white;
+    border-radius: 5px;
+    outline:  5px solid black;
+    padding: 40px;
+    font-size: 28px;
+    font-weight: bold;
+    color: rgb(39, 41, 38);
+}
+
+.cell:hover{
+    background-color: rgb(75, 204, 255);
+}
+
+#restart {
+    display: block;
+    margin: 0 auto;
+    margin-top: 30px;
+    padding: 10px 20px;
+    background: rgb(173, 173, 173);
+    border-radius: 4px;
+    font-size: 18;
+    font-weight: bold;
+    border: 2px solid transparent;
+}
