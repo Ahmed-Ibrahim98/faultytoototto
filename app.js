@@ -6,34 +6,67 @@ $(document).ready(function () {
   colors[1] = "red";
   var count = 0;
 
+  jQuery.fn.single_double_click = function (
+    single_click_callback,
+    double_click_callback,
+    timeout
+  ) {
+    return this.each(function () {
+      var clicks = 0,
+        self = this;
+      jQuery(this).click(function (event) {
+        clicks++;
+        if (clicks == 1) {
+          setTimeout(function () {
+            if (clicks == 1) {
+              single_click_callback.call(self, event);
+            } else {
+              double_click_callback.call(self, event);
+            }
+            clicks = 0;
+          }, timeout || 300);
+        }
+      });
+    });
+  };
+
   $(".cell").each(function () {
     $(this).attr("id", count);
     $(this).attr("data-player", 0);
     count++;
-    $(this).dblclick(function () {
-      console.log("hha");
-      if (isValid($(this).attr("id"))) {
-        $(this).text("T");
-        console.log($(this).text());
-        $(this).attr("data-player", player);
-        if (checkWin(player)) {
-          alert(colors[player] + " has won!");
-          winner = player;
+
+    $(this).single_double_click(
+      function () {
+        if (isValid($(this).attr("id"))) {
+          $(this).text("O");
+          $(this).attr("data-player", player);
+          $(this).attr("data-letter", "1");
+          if (checkWin(player)) {
+            alert(colors[player] + " has won!");
+            winner = player;
+          }
+          player *= -1;
         }
-        player *= -1;
-      }
-    });
-    $(this).click(function () {
-      if (isValid($(this).attr("id"))) {
-        $(this).text("O");
-        $(this).attr("data-player", player);
-        if (checkWin(player)) {
-          alert(colors[player] + " has won!");
-          winner = player;
+      },
+      function () {
+        console.log("hha");
+        if (isValid($(this).attr("id"))) {
+          $(this).text("T");
+          console.log($(this).text());
+          $(this).attr("data-player", player);
+          $(this).attr("data-letter", "-1");
+          if (checkWin(player) == 1) {
+            alert("OTTO has won!");
+            winner = 1;
+          }
+          if (checkWin(player) == 2) {
+            alert("TOOT has won!");
+            winner = 2;
+          }
+          player *= -1;
         }
-        player *= -1;
       }
-    });
+    );
   });
 
   $("#restart").click(function () {
@@ -43,6 +76,7 @@ $(document).ready(function () {
   function clearBoard() {
     $(".cell").each(function () {
       $(this).attr("data-player", 0);
+      $(this).attr("data-letter", 0);
       $(this).text("");
       winner = 0;
     });
@@ -65,25 +99,70 @@ $(document).ready(function () {
 
   function checkWin(p) {
     //check rows
-    var chain = 0;
+    var chain1 = "";
+    var chain2 = "";
+    var letter = 1;
     for (var i = 0; i < 24; i += 6) {
       for (var j = 0; j < 6; j++) {
         var cell = $("#" + (i + j));
-        if (cell.attr("data-player") == p) {
-          chain++;
+        if (chain1 == "") {
+          if (cell.attr("data-letter") == 1) {
+            chain1 += "1";
+            console.log(chain1);
+          }
         } else {
-          chain = 0;
+          if (chain1.length == 4) {
+            if (chain1 == "1-1-11") {
+              console.log(chain1);
+              return 1;
+            } else {
+              chain1 = "";
+            }
+          } else {
+            if (cell.attr("data-letter") == 1) {
+              if (chain1.length < 4) {
+                chain1 = "1";
+              }
+            } else {
+              if (cell.attr("data-letter") == 1 && chain1.length == 3) {
+                chain1 += "1";
+                console.log(chain1);
+              } else {
+                chain1 += "-1";
+                // console.log(chain1);
+              }
+            }
+          }
         }
 
-        if (chain >= 4) {
-          return true;
+        if (!chain2) {
+          if (cell.attr("data-letter") == letter * -1) {
+            chain2 += `${letter * -1}`;
+          }
+        } else {
+          if (chain2.length == 4) {
+            if (chain2 == "-111-1") {
+              return 2;
+            } else {
+              chain2 = "";
+            }
+          } else {
+            if (cell.attr("data-letter") == letter * -1) {
+              if (chain2.length < 4) {
+                chain2 = `${letter * -1}`;
+              }
+            } else {
+              chain2 += cell.attr("data-letter");
+            }
+          }
         }
       }
-      chain = 0;
+      chain1 = "";
+      chain2 = "";
     }
 
     //check columns
-    chain = 0;
+    chain1 = 0;
     for (var i = 0; i < 6; i++) {
       for (var j = 0; j < 24; j += 6) {
         var cell = $("#" + (i + j));
