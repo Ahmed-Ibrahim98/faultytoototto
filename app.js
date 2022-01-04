@@ -105,7 +105,7 @@ $(document).ready(function () {
     for (var i = 0; i < 24; i += 6) {
       for (var j = 0; j < 6; j++) {
         var cell = $("#" + (i + j));
-        if (chain1 === "") {
+        if (chain1.length == 0) {
           if (cell.attr("data-letter") == 1) {
             chain1 += "1";
             console.log(chain1);
