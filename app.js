@@ -105,7 +105,7 @@ $(document).ready(function () {
     for (var i = 0; i < 24; i += 6) {
       for (var j = 0; j < 6; j++) {
         var cell = $("#" + (i + j));
-        if (chain1 == "") {
+        if (chain1 === "") {
           if (cell.attr("data-letter") == 1) {
             chain1 += "1";
             console.log(chain1);
@@ -119,17 +119,16 @@ $(document).ready(function () {
               chain1 = "";
             }
           } else {
-            if (cell.attr("data-letter") == 1) {
-              if (chain1.length < 4) {
-                chain1 = "1";
-              }
-            } else {
+            if (chain1.length < 4) {
               if (cell.attr("data-letter") == 1 && chain1.length == 3) {
                 chain1 += "1";
                 console.log(chain1);
               } else {
-                chain1 += "-1";
-                // console.log(chain1);
+                if (cell.attr("data-letter") == 1) {
+                  chain1 = "1";
+                } else {
+                  chain1 += "-1";
+                }
               }
             }
           }
